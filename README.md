@@ -3,7 +3,7 @@ Query the Steam store and use HtmlAgilityPack to dig through the mess
 
 ## HOW DO I STEAM
 
-The url for talking to the Steam store _seems_ undocumented, at least I couldn't find information on it anywhere. Credit for url goes to [swiftyspiffy](https://github.com/swiftyspiffy/SteamStoreQuery), where I found it.
+The url for talking to the Steam store _seems_ undocumented, at least I couldn't find information on it anywhere. Credit for the url goes to [swiftyspiffy](https://github.com/swiftyspiffy/SteamStoreQuery), where I found it.
 
 ###### now what
 
