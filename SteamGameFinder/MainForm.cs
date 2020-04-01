@@ -188,6 +188,7 @@ namespace SteamGameFinder
 
     public class results
     {
+        // simple class to store three pieces of information Steam returns
         private string _game;
 
         public string theGame
