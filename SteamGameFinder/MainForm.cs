@@ -114,7 +114,6 @@ namespace SteamGameFinder
             Application.DoEvents();
             parseResults(htmlDoc, res);
 
-
             lblStatus.Text = "Listing games";
             Application.DoEvents();
             listGames(res);
