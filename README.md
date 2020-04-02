@@ -15,7 +15,12 @@ Added functions to read games on sale.
     <img src="sq.png" width="667px"</img> 
 </div>
 
+
 <div align="center">
-    <img src="sgf.png" width="667px"</img> 
+    <img src="sgf.png" width="436px"</img> 
 </div>
 
+
+<div align="center">
+    <img src="sgf1.png" width="557px"</img> 
+</div>
