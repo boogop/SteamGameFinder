@@ -20,7 +20,7 @@ Added functions to read games on sale.
     <img src="sgf.png" width="436px"</img> 
 </div>
 
-I'm looking at you, Metro Exodus
+I'm looking at you, Metro Exodus 0.o
 
 <div align="center">
     <img src="sgf1.png" width="557px"</img> 
