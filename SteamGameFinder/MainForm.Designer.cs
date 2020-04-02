@@ -28,15 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnSearch = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.lblStatus = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
             this.txtCC = new System.Windows.Forms.TextBox();
+            this.btnSpecials = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.btnSearch = new System.Windows.Forms.Button();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -58,23 +61,6 @@
             this.label1.Size = new System.Drawing.Size(92, 17);
             this.label1.TabIndex = 4;
             this.label1.Text = "Search string";
-            // 
-            // btnSearch
-            // 
-            this.btnSearch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(80)))), ((int)(((byte)(80)))));
-            this.btnSearch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnSearch.ForeColor = System.Drawing.Color.Yellow;
-            this.btnSearch.Image = global::SteamGameFinder.Properties.Resources.onebit_28;
-            this.btnSearch.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnSearch.Location = new System.Drawing.Point(386, 7);
-            this.btnSearch.Margin = new System.Windows.Forms.Padding(4);
-            this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(152, 62);
-            this.btnSearch.TabIndex = 3;
-            this.btnSearch.Text = "Find Stuff";
-            this.btnSearch.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnSearch.UseVisualStyleBackColor = false;
-            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
             // flowLayoutPanel1
             // 
@@ -100,6 +86,36 @@
             this.lblStatus.TabIndex = 7;
             this.lblStatus.Text = "Ready";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.Color.Yellow;
+            this.label2.Location = new System.Drawing.Point(550, 30);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(26, 17);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "CC";
+            // 
+            // txtCC
+            // 
+            this.txtCC.Location = new System.Drawing.Point(592, 27);
+            this.txtCC.Name = "txtCC";
+            this.txtCC.Size = new System.Drawing.Size(37, 22);
+            this.txtCC.TabIndex = 10;
+            this.txtCC.Text = "US";
+            // 
+            // btnSpecials
+            // 
+            this.btnSpecials.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(80)))), ((int)(((byte)(80)))));
+            this.btnSpecials.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnSpecials.Image = global::SteamGameFinder.Properties.Resources.Smiley;
+            this.btnSpecials.Location = new System.Drawing.Point(643, 7);
+            this.btnSpecials.Name = "btnSpecials";
+            this.btnSpecials.Size = new System.Drawing.Size(57, 62);
+            this.btnSpecials.TabIndex = 11;
+            this.btnSpecials.UseVisualStyleBackColor = false;
+            this.btnSpecials.Click += new System.EventHandler(this.btnSpecials_Click);
+            // 
             // pictureBox1
             // 
             this.pictureBox1.Image = global::SteamGameFinder.Properties.Resources.onebit_27;
@@ -110,23 +126,22 @@
             this.pictureBox1.TabIndex = 8;
             this.pictureBox1.TabStop = false;
             // 
-            // label2
+            // btnSearch
             // 
-            this.label2.AutoSize = true;
-            this.label2.ForeColor = System.Drawing.Color.Yellow;
-            this.label2.Location = new System.Drawing.Point(558, 30);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(26, 17);
-            this.label2.TabIndex = 9;
-            this.label2.Text = "CC";
-            // 
-            // txtCC
-            // 
-            this.txtCC.Location = new System.Drawing.Point(600, 27);
-            this.txtCC.Name = "txtCC";
-            this.txtCC.Size = new System.Drawing.Size(37, 22);
-            this.txtCC.TabIndex = 10;
-            this.txtCC.Text = "US";
+            this.btnSearch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(80)))), ((int)(((byte)(80)))));
+            this.btnSearch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnSearch.ForeColor = System.Drawing.Color.Yellow;
+            this.btnSearch.Image = global::SteamGameFinder.Properties.Resources.onebit_28;
+            this.btnSearch.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnSearch.Location = new System.Drawing.Point(386, 7);
+            this.btnSearch.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(152, 62);
+            this.btnSearch.TabIndex = 3;
+            this.btnSearch.Text = "Find Stuff";
+            this.btnSearch.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnSearch.UseVisualStyleBackColor = false;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
             // MainForm
             // 
@@ -134,6 +149,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(713, 654);
+            this.Controls.Add(this.btnSpecials);
             this.Controls.Add(this.txtCC);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.pictureBox1);
@@ -163,6 +179,8 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtCC;
+        private System.Windows.Forms.Button btnSpecials;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 
 }

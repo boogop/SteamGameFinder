@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants\clsSteamKeys.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,6 +97,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="chart.ico" />
+    <None Include="Resources\Smiley.png" />
+    <None Include="Resources\search 128.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

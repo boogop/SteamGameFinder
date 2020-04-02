@@ -11,6 +11,8 @@ using System.Net;
 using gT = SteamGameFinder.Utils.GeneralTools;
 using SteamGameFinder.Utils;
 using HtmlAgilityPack;
+using System.Text.RegularExpressions;
+using cS = SteamGameFinder.Constants.clsSteamKeys;
 
 namespace SteamGameFinder
 {
@@ -46,6 +48,11 @@ namespace SteamGameFinder
         <div class=\"match_price\">$24.99</div>
         </a>
       
+
+        todo:
+
+        specials
+        https://store.steampowered.com/search/?specials=1&os=win
       
      */
     #endregion
@@ -56,7 +63,12 @@ namespace SteamGameFinder
         {
             InitializeComponent();
 
+            toolTip1.SetToolTip(btnSearch, "Look for stuff");
+            toolTip1.SetToolTip(btnSpecials, "Find righteous specials");
+
         }
+
+        #region buttons
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
@@ -76,6 +88,26 @@ namespace SteamGameFinder
             }
         }
 
+        private void btnSpecials_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                tryToGetSpecialsLol();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "wat");
+            }
+            finally
+            {
+                lblStatus.Text = "Done";
+            }
+        }
+
+        #endregion
+
+        #region search methods
+
         private void crossYourFingers()
         {
             lblStatus.Text = "Trying to talk to Steam";
@@ -91,12 +123,12 @@ namespace SteamGameFinder
             // to SwiftySpiffy, where I found the query
             // https://github.com/swiftyspiffy/SteamStoreQuery
             string url = "https://store.steampowered.com/search/suggest?term=" +
-                searchTerm + "&f=games&cc=" + countryCode + "&lang=english&v=2286217";
+                searchTerm + "&f=games&cc=" + countryCode + "&lang=english&v=2286217";            
 
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             string response = client.DownloadString(url);
 
-            if(chkNull.isNull(response))
+            if (chkNull.isNull(response))
             {
                 MessageBox.Show("No results found for " + txtSearch.Text, "Goose Egg");
                 return;
@@ -119,7 +151,115 @@ namespace SteamGameFinder
             listGames(res);
         }
 
-        private void listGames(List<results> res)
+        private static void parseResults(HtmlAgilityPack.HtmlDocument htmlDoc, List<results> res)
+        {
+            // use HtmlAgilityPack to loop through the structure of the HTML and try to find the main nodes.
+            // seems all nodes are demarcated by whatever 'match ds_collapse_flag' is
+            foreach (HtmlNode mdiv in htmlDoc.DocumentNode.SelectNodes("//a[contains(@class,'" + cS.steamSearchContainer + "')]"))
+            {
+                results r = new results();
+
+                // Load each individual node into a new HtmlDocument
+                HtmlAgilityPack.HtmlDocument innerDoc = new HtmlAgilityPack.HtmlDocument();
+                innerDoc.LoadHtml(mdiv.InnerHtml);
+
+                // now find the nodes we're looking for
+                HtmlNode div = innerDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'" + cS.steamSearchGameName + "')]");
+                // if found, HtmlAgilityPack returns what you're looking for in innerhtml
+                // --> else {blow up}
+                r.theGame = div.InnerHtml;
+
+                div = innerDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'" + cS.steamSearchImage + "')]");
+                r.theImage = div.InnerHtml;
+
+                div = innerDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'" + cS.steamSearchPrice + "')]");
+                r.thePrice = gT.ReplaceEx(div.InnerHtml, "$", "");
+
+                // add the instance of results() to the res list
+                res.Add(r);
+            }
+        }
+       
+        #endregion
+
+        #region specials methods
+
+        private void tryToGetSpecialsLol()
+        {
+            lblStatus.Text = "Trying to talk to Steam";
+            Application.DoEvents();
+
+            WebClient client = new WebClient();
+
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            string response = client.DownloadString(cS.steamSpecialsURL);
+            string foo = response;            
+            
+            HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
+            htmlDoc.LoadHtml(response);
+            List<results> res = new List<results>();
+
+            lblStatus.Text = "Parsing response";
+            Application.DoEvents();
+            parseResults(htmlDoc, res, cS.steamSpecialsContainer);
+
+            lblStatus.Text = "Listing games";
+            Application.DoEvents();
+            listGames(res, true);
+        }
+
+        private static void parseResults(HtmlAgilityPack.HtmlDocument htmlDoc, List<results> res, string classname)
+        {
+            // use HtmlAgilityPack to loop through the structure of the HTML and try to find the main nodes.
+            foreach (HtmlNode mdiv in htmlDoc.DocumentNode.SelectNodes("//a[contains(@class,'" + classname + "')]"))
+            {
+                results r = new results();
+
+                // Load each individual node into a new HtmlDocument
+                HtmlAgilityPack.HtmlDocument innerDoc = new HtmlAgilityPack.HtmlDocument();
+                innerDoc.LoadHtml(mdiv.InnerHtml);
+
+                // now find the nodes we're looking for
+                HtmlNode div = innerDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'" + cS.steamSpecialsGameName + "')]");
+                // if found, HtmlAgilityPack returns what you're looking for in innerhtml
+                // --> else {blow up}
+                r.theGame = div.InnerHtml;
+
+                div = innerDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'" + cS.steamSpecialsImage + "')]");
+                r.theImage = div.InnerHtml;
+
+                // the discounts and prices are squirrelled away in here, forcing us to do a couple more loads
+                div = innerDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'" + cS.steamSpecialsMoneySection + "')]");
+                innerDoc.LoadHtml(div.InnerHtml);
+                div = innerDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'" + cS.steamSpecialsDiscount + "')]");
+
+                string discount = gT.ReplaceEx(div.InnerText, "\r\n", "").Trim();
+
+                div = innerDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'" + cS.steamSpecialsPrices + "')]");
+                string p = gT.ReplaceEx(div.InnerText, "\r\n", "").Trim();
+                string[] p1 = p.Split('$');
+                string price = "";
+                if (p1.Length == 3)
+                {
+                    price = "Disc " + discount + " $" + p1[1] + " -> $" + p1[2];
+                }
+                else
+                {
+                    price = p;
+                }
+
+                r.thePrice = price;
+
+                // add the instance of results() to the res list
+                res.Add(r);
+            }
+        }
+
+        #endregion
+
+        #region rando
+
+        private void listGames(List<results> res, bool specials = false)
         {
             // loop over the results, stick the data in controls, group the controls in panels
             // and stuff the whole mess into a flowlayoutpanel
@@ -140,13 +280,16 @@ namespace SteamGameFinder
 
                 Label desc = new Label();
                 desc.Text = res[i].theGame;
+                if (specials)
+                    desc.Text = StripHTML(res[i].theGame).Trim();
+
                 desc.AutoSize = true;
                 desc.Location = new Point(0, 50);
                 desc.ForeColor = Color.Yellow;
                 pnl.Controls.Add(desc);
 
                 Label price = new Label();
-                price.Text = "$" + chkNull.numNull(res[i].thePrice);
+                price.Text = "$" + chkNull.whenNull(res[i].thePrice);
                 price.AutoSize = true;
                 price.Location = new Point(0, 70);
                 price.ForeColor = Color.Yellow;
@@ -157,37 +300,21 @@ namespace SteamGameFinder
             }
         }
 
-        private static void parseResults(HtmlAgilityPack.HtmlDocument htmlDoc, List<results> res)
+        public static string StripHTML(string HTMLText)
         {
-            // use HtmlAgilityPack to loop through the structure of the HTML and try to find the main nodes.
-            // seems all nodes are demarcated by whatever 'match ds_collapse_flag' is
-            foreach (HtmlNode mdiv in htmlDoc.DocumentNode.SelectNodes("//a[contains(@class,'match ds_collapse_flag')]"))
-            {
-                results r = new results();
-
-                // Load each individual node into a new HtmlDocument
-                HtmlAgilityPack.HtmlDocument innerDoc = new HtmlAgilityPack.HtmlDocument();
-                innerDoc.LoadHtml(mdiv.InnerHtml);
-
-                // now find the nodes we're looking for
-                HtmlNode div = innerDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'match_name')]");
-                // if found, HtmlAgilityPack returns what you're looking for innerhtml
-                // --> else {blow up}
-                r.theGame = div.InnerHtml;
-                div = innerDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'match_img')]");
-                r.theImage = div.InnerHtml;
-                div = innerDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'match_price')]");
-                r.thePrice = Utils.chkNull.numNull(gT.ReplaceEx(div.InnerHtml, "$", ""));
-
-                // add the instance of results() to the res list
-                res.Add(r);
-            }
+            Regex reg = new Regex("<[^>]+>", RegexOptions.IgnoreCase);
+            string stripped = reg.Replace(HTMLText, "");
+            return stripped;
+            // return decode ? HttpUtility.HtmlDecode(stripped) : stripped;
         }
+      
+        #endregion
+
     }
 
     public class results
     {
-        // simple class to store three pieces of information Steam returns
+        // simple class to store three pieces of information about a game
         private string _game;
 
         public string theGame
@@ -204,9 +331,9 @@ namespace SteamGameFinder
             set { _image = value; }
         }
 
-        private double _price;
+        private string _price;
 
-        public double thePrice
+        public string thePrice
         {
             get { return _price; }
             set { _price = value; }
